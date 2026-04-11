@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Stack: ASP.NET Core API + C# + SQL + HTML</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d45;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --code-bg: #0d1117;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0d1b2e 0%, #1a0a2e 50%, #0a1a2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 24px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(0,212,255,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(124,58,237,0.07) 0%, transparent 60%);
+  }
+  .header-badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 999px; padding: 4px 14px; font-size: 11px;
+    letter-spacing: 2px; color: var(--accent); text-transform: uppercase;
+    margin-bottom: 16px; font-family: 'JetBrains Mono', monospace;
+  }
+  header h1 {
+    font-size: clamp(22px, 4vw, 40px); font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--accent2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1.2; margin-bottom: 12px;
+  }
+  header p {
+    color: var(--muted); font-size: 14px; max-width: 640px; margin: 0 auto 20px;
+  }
+  .stack-pills {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  }
+  .pill {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 12px; font-size: 12px;
+    font-family: 'JetBrains Mono', monospace; color: var(--text);
+  }
+  .pill.blue { border-color: rgba(0,212,255,0.4); color: var(--accent); }
+  .pill.purple { border-color: rgba(124,58,237,0.4); color: #a78bfa; }
+  .pill.green { border-color: rgba(16,185,129,0.4); color: var(--accent3); }
+
+  /* NAV TABS */
+  nav {
+    display: flex; gap: 0; overflow-x: auto;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 14px 18px; font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent;
+    color: var(--muted); transition: all 0.2s; letter-spacing: 0.3px;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-num {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 4px; padding: 1px 6px; font-size: 10px;
+    font-family: 'JetBrains Mono', monospace; color: var(--muted);
+  }
+  .tab.active .tab-num { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.3); color: var(--accent); }
+
+  /* LAYOUT */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+  .section { display: none; padding: 32px 0 64px; }
+  .section.active { display: block; }
+
+  /* STEP CARDS */
+  .step {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 20px; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .step:hover { border-color: #2a3a55; }
+  .step-header {
+    padding: 16px 20px; display: flex; align-items: center; gap: 14px;
+    cursor: pointer; user-select: none;
+  }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 8px; display: flex;
+    align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .step-num.blue { background: rgba(0,212,255,0.15); color: var(--accent); }
+  .step-num.purple { background: rgba(124,58,237,0.15); color: #a78bfa; }
+  .step-num.green { background: rgba(16,185,129,0.15); color: var(--accent3); }
+  .step-num.warn { background: rgba(245,158,11,0.15); color: var(--warn); }
+  .step-title { font-weight: 600; font-size: 15px; flex: 1; }
+  .step-tag {
+    font-size: 10px; font-family: 'JetBrains Mono', monospace;
+    padding: 2px 8px; border-radius: 4px; letter-spacing: 1px;
+  }
+  .step-tag.cs { background: rgba(124,58,237,0.2); color: #a78bfa; }
+  .step-tag.sql { background: rgba(245,158,11,0.2); color: var(--warn); }
+  .step-tag.html { background: rgba(239,68,68,0.2); color: #f87171; }
+  .step-tag.api { background: rgba(0,212,255,0.2); color: var(--accent); }
+  .step-body { padding: 0 20px 20px; border-top: 1px solid var(--border); }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: var(--code-bg); border: 1px solid #1e2d45;
+    border-radius: 8px; margin: 14px 0; overflow: hidden;
+  }
+  .code-bar {
+    background: #161b22; padding: 8px 14px; display: flex;
+    align-items: center; justify-content: space-between;
+    border-bottom: 1px solid #1e2d45;
+  }
+  .code-lang { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted); }
+  .copy-btn {
+    background: none; border: 1px solid var(--border); border-radius: 4px;
+    padding: 3px 10px; font-size: 11px; color: var(--muted); cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; transition: all 0.15s;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .copy-btn.copied { border-color: var(--accent3); color: var(--accent3); }
+  pre {
+    padding: 16px 14px; overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: #c9d1d9;
+    scrollbar-width: thin; scrollbar-color: #2a3a55 transparent;
+  }
+  pre::-webkit-scrollbar { height: 4px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: #2a3a55; border-radius: 2px; }
+
+  /* SYNTAX COLORS */
+  .k { color: #ff7b72; } /* keyword */
+  .t { color: #79c0ff; } /* type */
+  .s { color: #a5d6ff; } /* string */
+  .c { color: #8b949e; font-style: italic; } /* comment */
+  .m { color: #ffa657; } /* method/attribute */
+  .n { color: #d2a8ff; } /* namespace/class */
+  .v { color: #e6edf3; } /* variable */
+  .p { color: #ff7b72; } /* punctuation accent */
+  .num { color: #79c0ff; } /* numbers */
+
+  /* CALLOUTS */
+  .callout {
+    border-radius: 8px; padding: 12px 16px; margin: 14px 0;
+    display: flex; gap: 10px; align-items: flex-start; font-size: 13px;
+  }
+  .callout.info { background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.2); }
+  .callout.warn { background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2); color: #fcd34d; }
+  .callout.tip { background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.2); color: #6ee7b7; }
+  .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  p { margin: 10px 0; color: #94a3b8; font-size: 14px; }
+  strong { color: var(--text); }
+  ul, ol { padding-left: 20px; color: #94a3b8; font-size: 14px; }
+  li { margin: 5px 0; }
+
+  /* ARCH DIAGRAM */
+  .arch {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  }
+  .arch-row { display: flex; align-items: center; gap: 12px; margin: 8px 0; flex-wrap: wrap; }
+  .arch-box {
+    padding: 8px 16px; border-radius: 8px; border: 1px solid; font-size: 12px;
+    white-space: nowrap;
+  }
+  .arch-arrow { color: var(--muted); font-size: 18px; }
+  .box-html { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.4); color: #f87171; }
+  .box-api { background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.4); color: var(--accent); }
+  .box-cs { background: rgba(124,58,237,0.1); border-color: rgba(124,58,237,0.4); color: #a78bfa; }
+  .box-db { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.4); color: var(--warn); }
+  .arch-label { color: var(--muted); font-size: 11px; letter-spacing: 1px; }
+
+  /* SECTION TITLE */
+  .sec-title {
+    font-size: 22px; font-weight: 800; color: var(--text);
+    margin-bottom: 6px; display: flex; align-items: center; gap: 10px;
+    padding-top: 8px;
+  }
+  .sec-sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+
+  /* DEMO PREVIEW */
+  .demo-preview {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; margin: 16px 0;
+  }
+  .demo-title { font-size: 12px; color: var(--muted); margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+  .fake-ui { background: #fff; border-radius: 8px; overflow: hidden; }
+  .fake-nav { background: #1e3a5f; padding: 10px 16px; display: flex; gap: 8px; align-items: center; }
+  .fake-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .fake-title { color: #fff; font-size: 13px; font-weight: 600; margin-left: 4px; }
+  .fake-content { padding: 20px; background: #f8fafc; }
+  .fake-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+  .fake-avatar { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .fake-info h4 { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .fake-info p { font-size: 11px; color: #64748b; margin: 2px 0 0; }
+  .fake-badge { margin-left: auto; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+
+  /* FOOTER */
+  footer {
+    background: var(--surface); border-top: 1px solid var(--border);
+    padding: 20px 24px; text-align: center; color: var(--muted); font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    height: 2px; background: var(--surface2);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 0%; transition: width 0.3s;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<header>
+  <div class="header-badge">🏦 Full Stack Tutorial</div>
+  <h1>ASP.NET Core API + C# + SQL Server + HTML</h1>
+  <p>Build a complete bank/government data system from scratch — database → backend → API → frontend.</p>
+  <div class="stack-pills">
+    <span class="pill blue">ASP.NET Core 8</span>
+    <span class="pill purple">C# 12</span>
+    <span class="pill warn">SQL Server / LocalDB</span>
+    <span class="pill green">Entity Framework Core</span>
+    <span class="pill">HTML + JS</span>
+    <span class="pill">Swagger / OpenAPI</span>
+  </div>
+</header>
+
+<nav>
+  <div class="tab active" onclick="showTab(0)">
+    <span>Architecture</span><span class="tab-num">01</span>
+  </div>
+  <div class="tab" onclick="showTab(1)">
+    <span>Database</span><span class="tab-num">02</span>
+  </div>
+  <div class="tab" onclick="showTab(2)">
+    <span>C# Backend</span><span class="tab-num">03</span>
+  </div>
+  <div class="tab" onclick="showTab(3)">
+    <span>ASP.NET API</span><span class="tab-num">04</span>
+  </div>
+  <div class="tab" onclick="showTab(4)">
+    <span>HTML Frontend</span><span class="tab-num">05</span>
+  </div>
+  <div class="tab" onclick="showTab(5)">
+    <span>Wire It Up</span><span class="tab-num">06</span>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ TAB 0: ARCHITECTURE -->
+<div class="section active" id="tab-0">
+<div class="container">
+  <div class="sec-title">🏗️ Architecture Overview</div>
+  <div class="sec-sub">How all four layers connect — from SQL Server to the browser</div>
+
+  <div class="arch">
+    <div class="arch-label">REQUEST FLOW</div>
+    <div style="margin-top:14px;">
+      <div class="arch-row">
+        <div class="arch-box box-html">🌐 HTML / JS<br><span style="font-size:10px;opacity:0.7">Browser (fetch/AJAX)</span></div>
+        <div class="arch-arrow">→ HTTP →</div>
+        <div class="arch-box box-api">⚡ ASP.NET Core API<br><span style="font-size:10px;opacity:0.7">Controllers / Routes</span></div>
+        <div class="arch-arrow">→ calls →</div>
+        <div class="arch-box box-cs">🔷 C# Services<br><span style="font-size:10px;opacity:0.7">Business Logic</span></div>
+        <div class="arch-arrow">→ EF Core →</div>
+        <div class="arch-box box-db">🗄️ SQL Server<br><span style="font-size:10px;opacity:0.7">LocalDB / Express</span></div>
+      </div>
+      <div class="arch-row" style="margin-top:16px;">
+        <div class="arch-box box-html">Browser shows data</div>
+        <div class="arch-arrow">← JSON ←</div>
+        <div class="arch-box box-api">Serialises response</div>
+        <div class="arch-arrow">← returns ←</div>
+        <div class="arch-box box-cs">Returns models</div>
+        <div class="arch-arrow">← queries ←</div>
+        <div class="arch-box box-db">Rows → objects</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num blue">01</div>
+      <div class="step-title">What we are building — Bank + Government Data Portal</div>
+      <span class="step-tag api">OVERVIEW</span>
+    </div>
+    <div class="step-body">
+      <p>We will build a <strong>Financial Records API</strong> — the same pattern used by banks and government agencies to expose data securely. The system will have:</p>
+      <ul>
+        <li><strong>SQL Server LocalDB</strong> — stores accounts, transactions, citizens</li>
+        <li><strong>Entity Framework Core</strong> — C# ORM that maps DB tables to C# classes</li>
+        <li><strong>C# Service Layer</strong> — business logic (balance checks, filters)</li>
+        <li><strong>ASP.NET Core Web API</strong> — REST endpoints at <code>/api/accounts</code></li>
+        <li><strong>HTML + Fetch</strong> — clean frontend that calls the API</li>
+      </ul>
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div>Everything runs <strong>locally</strong>. No cloud needed. SQL Server LocalDB is free with Visual Studio. Your API runs on <code>https://localhost:7000</code>.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num green">02</div>
+      <div class="step-title">Prerequisites — install these first</div>
+      <span class="step-tag cs">SETUP</span>
+    </div>
+    <div class="step-body">
+      <ul>
+        <li><strong>.NET 8 SDK</strong> — <a href="https://dotnet.microsoft.com/download" style="color:var(--accent)">dotnet.microsoft.com</a></li>
+        <li><strong>Visual Studio 2022</strong> (Community is free) — includes SQL LocalDB</li>
+        <li><strong>SQL Server Management Studio</strong> (SSMS) or Azure Data Studio — to view DB</li>
+        <li><strong>Any browser</strong> — for the HTML frontend</li>
+      </ul>
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">bash — verify install</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>dotnet --version          <span class="c"># should print 8.x.x</span>
+dotnet new webapi --help  <span class="c"># confirms templates available</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num blue">03</div>
+      <div class="step-title">Project structure we will create</div>
+      <span class="step-tag cs">STRUCTURE</span>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">project tree</span></div>
+        <pre>FinanceApi/
+├── Controllers/
+│   └── AccountsController.cs     <span class="c"># HTTP endpoints</span>
+│   └── TransactionsController.cs
+├── Models/
+│   └── Account.cs                <span class="c"># C# data classes</span>
+│   └── Transaction.cs
+├── Data/
+│   └── AppDbContext.cs           <span class="c"># EF Core database context</span>
+├── Services/
+│   └── AccountService.cs         <span class="c"># business logic</span>
+├── DTOs/
+│   └── AccountDto.cs             <span class="c"># data transfer objects</span>
+├── Program.cs                    <span class="c"># app startup + DI</span>
+├── appsettings.json              <span class="c"># connection string</span>
+└── frontend/
+    └── index.html                <span class="c"># your browser UI</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TAB 1: DATABASE -->
+<div class="section" id="tab-1">
+<div class="container">
+  <div class="sec-title">🗄️ Database — SQL Server LocalDB</div>
+  <div class="sec-sub">Design the tables, then let Entity Framework create them automatically</div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num warn">01</div>
+      <div class="step-title">Create the ASP.NET Core project</div>
+      <span class="step-tag cs">CLI</span>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="c"># Create Web API project</span>
+dotnet new webapi -n FinanceApi --use-controllers
+cd FinanceApi
+
+<span class="c"># Install Entity Framework Core + SQL Server provider</span>
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package Microsoft.EntityFrameworkCore.Design
+
+<span class="c"># Install Swagger for API testing</span>
+dotnet add package Swashbuckle.AspNetCore</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num warn">02</div>
+      <div class="step-title">Set up the connection string — appsettings.json</div>
+      <span class="step-tag sql">CONFIG</span>
+    </div>
+    <div class="step-body">
+      <p>This tells EF Core where your <strong>SQL Server LocalDB</strong> lives. LocalDB creates a <code>.mdf</code> file in your user folder automatically.</p>
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">appsettings.json</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>{
+  <span class="s">"ConnectionStrings"</span>: {
+    <span class="s">"DefaultConnection"</span>: <span class="s">"Server=(localdb)\\MSSQLLocalDB;Database=FinanceDb;Trusted_Connection=True;MultipleActiveResultSets=true"</span>
+  },
+  <span class="s">"AllowedHosts"</span>: <span class="s">"*"</span>
+}</pre>
+      </div>
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div>If you installed <strong>SQL Server Express</strong> instead of LocalDB, use: <code>"Server=.\\SQLEXPRESS;Database=FinanceDb;Trusted_Connection=True"</code></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num warn">03</div>
+      <div class="step-title">Create the C# Model classes — these become DB tables</div>
+      <span class="step-tag cs">MODELS</span>
+    </div>
+    <div class="step-body">
+      <p>Each <strong>C# class</strong> becomes a <strong>SQL table</strong>. Each property becomes a <strong>column</strong>. EF Core handles this mapping automatically.</p>
+
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">Models/Account.cs</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="k">using</span> <span class="n">System.ComponentModel.DataAnnotations</span>;
+
+<span class="k">namespace</span> <span class="n">FinanceApi.Models</span>;
+
+<span class="k">public class</span> <span class="t">Account</span>
+{
+    <span class="k">public</span> <span class="t">int</span> <span class="v">Id</span> { <span class="k">get</span>; <span class="k">set</span>; }          <span class="c">// PRIMARY KEY (auto-increment)</span>
+
+    [<span class="m">Required</span>, <span class="m">MaxLength</span>(<span class="num">100</span>)]
+    <span class="k">public string</span> <span class="v">OwnerName</span> { <span class="k">get</span>; <span class="k">set</span>; } = <span class="s">""</span>;
+
+    [<span class="m">Required</span>, <span class="m">MaxLength</span>(<span class="num">20</span>)]
+    <span class="k">public string</span> <span class="v">AccountNumber</span> { <span class="k">get</span>; <span class="k">set</span>; } = <span class="s">""</span>;
+
+    <span class="k">public decimal</span> <span class="v">Balance</span> { <span class="k">get</span>; <span class="k">set</span>; }
+
+    <span class="k">public string</span> <span class="v">AccountType</span> { <span class="k">get</span>; <span class="k">set</span>; } = <span class="s">"Checking"</span>; <span class="c">// Savings, Govt</span>
+
+    <span class="k">public</span> <span class="t">DateTime</span> <span class="v">CreatedAt</span> { <span class="k">get</span>; <span class="k">set</span>; } = <span class="t">DateTime</span>.UtcNow;
+
+    <span class="k">public bool</span> <span class="v">IsActive</span> { <span class="k">get</span>; <span class="k">set</span>; } = <span class="k">true</span>;
+
+    <span class="c">// Navigation property — one account has many transactions</span>
+    <span class="k">public</span> <span class="t">ICollection</span>&lt;<span class="t">Transaction</span>&gt; <span class="v">Transactions</span> { <span class="k">get</span>; <span class="k">set</span>; } = [];
+}</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">Models/Transaction.cs</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="k">namespace</span> <span class="n">FinanceApi.Models</span>;
+
+<span class="k">public class</span> <span class="t">Transaction</span>
+{
+    <span class="k">public</span> <span class="t">int</span> <span class="v">Id</span> { <span class="k">get</span>; <span class="k">set</span>; }
+
+    <span class="k">public</span> <span class="t">int</span> <span class="v">AccountId</span> { <span class="k">get</span>; <span class="k">set</span>; }   <span class="c">// FOREIGN KEY</span>
+    <span class="k">public</span> <span class="t">Account</span> <span class="v">Account</span> { <span class="k">get</span>; <span class="k">set</span>; } = <span class="k">null</span>!;
+
+    <span class="k">public decimal</span> <span class="v">Amount</span> { <span class="k">get</span>; <span class="k">set</span>; }
+
+    <span class="k">public string</span> <span class="v">Type</span> { <span class="k">get</span>; <span class="k">set</span>; } = <span class="s">"Credit"</span>; <span class="c">// Debit, Transfer</span>
+
+    <span class="k">public string</span> <span class="v">Description</span> { <span class="k">get</span>; <span class="k">set</span>; } = <span class="s">""</span>;
+
+    <span class="k">public</span> <span class="t">DateTime</span> <span class="v">Date</span> { <span class="k">get</span>; <span class="k">set</span>; } = <span class="t">DateTime</span>.UtcNow;
+
+    <span class="k">public string</span> <span class="v">Status</span> { <span class="k">get</span>; <span class="k">set</span>; } = <span class="s">"Completed"</span>; <span class="c">// Pending, Failed</span>
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num warn">04</div>
+      <div class="step-title">Create AppDbContext — the bridge between C# and SQL</div>
+      <span class="step-tag cs">EF CORE</span>
+    </div>
+    <div class="step-body">
+      <p>The <strong>DbContext</strong> is the heart of EF Core. It maps your C# classes to SQL tables and handles all queries.</p>
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">Data/AppDbContext.cs</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="k">using</span> <span class="n">Microsoft.EntityFrameworkCore</span>;
+<span class="k">using</span> <span class="n">FinanceApi.Models</span>;
+
+<span class="k">namespace</span> <span class="n">FinanceApi.Data</span>;
+
+<span class="k">public class</span> <span class="t">AppDbContext</span> : <span class="t">DbContext</span>
+{
+    <span class="k">public</span> <span class="t">AppDbContext</span>(<span class="t">DbContextOptions</span>&lt;<span class="t">AppDbContext</span>&gt; <span class="v">options</span>)
+        : <span class="k">base</span>(<span class="v">options</span>) { }
+
+    <span class="c">// These become SQL tables automatically</span>
+    <span class="k">public</span> <span class="t">DbSet</span>&lt;<span class="t">Account</span>&gt; <span class="v">Accounts</span> =&gt; <span class="t">Set</span>&lt;<span class="t">Account</span>&gt;();
+    <span class="k">public</span> <span class="t">DbSet</span>&lt;<span class="t">Transaction</span>&gt; <span class="v">Transactions</span> =&gt; <span class="t">Set</span>&lt;<span class="t">Transaction</span>&gt;();
+
+    <span class="k">protected override void</span> <span class="m">OnModelCreating</span>(<span class="t">ModelBuilder</span> <span class="v">mb</span>)
+    {
+        <span class="c">// Precision for money — important for banking!</span>
+        <span class="v">mb</span>.<span class="m">Entity</span>&lt;<span class="t">Account</span>&gt;()
+          .<span class="m">Property</span>(<span class="v">a</span> =&gt; <span class="v">a</span>.Balance)
+          .<span class="m">HasPrecision</span>(<span class="num">18</span>, <span class="num">2</span>);
+
+        <span class="v">mb</span>.<span class="m">Entity</span>&lt;<span class="t">Transaction</span>&gt;()
+          .<span class="m">Property</span>(<span class="v">t</span> =&gt; <span class="v">t</span>.Amount)
+          .<span class="m">HasPrecision</span>(<span class="num">18</span>, <span class="num">2</span>);
+
+        <span class="c">// Seed data — so DB is not empty on first run</span>
+        <span class="v">mb</span>.<span class="m">Entity</span>&lt;<span class="t">Account</span>&gt;().<span class="m">HasData</span>(
+            <span class="k">new</span> <span class="t">Account</span> { <span class="v">Id</span>=<span class="num">1</span>, <span class="v">OwnerName</span>=<span class="s">"Ministry of Finance"</span>,
+                <span class="v">AccountNumber</span>=<span class="s">"GOV-001"</span>, <span class="v">Balance</span>=<span class="num">9_500_000</span>, <span class="v">AccountType</span>=<span class="s">"Government"</span> },
+            <span class="k">new</span> <span class="t">Account</span> { <span class="v">Id</span>=<span class="num">2</span>, <span class="v">OwnerName</span>=<span class="s">"Central Bank Reserve"</span>,
+                <span class="v">AccountNumber</span>=<span class="s">"CB-001"</span>, <span class="v">Balance</span>=<span class="num">250_000_000</span>, <span class="v">AccountType</span>=<span class="s">"Reserve"</span> },
+            <span class="k">new</span> <span class="t">Account</span> { <span class="v">Id</span>=<span class="num">3</span>, <span class="v">OwnerName</span>=<span class="s">"John Citizen"</span>,
+                <span class="v">AccountNumber</span>=<span class="s">"ACC-8821"</span>, <span class="v">Balance</span>=<span class="num">4_200.50m</span>, <span class="v">AccountType</span>=<span class="s">"Checking"</span> }
+        );
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num warn">05</div>
+      <div class="step-title">Run migrations — create the actual SQL tables</div>
+      <span class="step-tag sql">MIGRATIONS</span>
+    </div>
+    <div class="step-body">
+      <p>EF Core will read your C# models and <strong>generate SQL CREATE TABLE statements</strong> automatically. You never write raw DDL.</p>
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">bash — in project root</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="c"># Generate migration files (C# code that describes DB changes)</span>
+dotnet ef migrations add InitialCreate
+
+<span class="c"># Apply the migration — this creates the SQL tables in LocalDB</span>
+dotnet ef database update
+
+<span class="c"># You should see: "Done." in terminal</span>
+<span class="c"># Tables created: Accounts, Transactions, __EFMigrationsHistory</span></pre>
+      </div>
+      <div class="callout tip">
+        <span class="callout-icon">✅</span>
+        <div>Open SSMS and connect to <code>(localdb)\MSSQLLocalDB</code> — you will see your <strong>FinanceDb</strong> database with the tables already created and seed data inserted.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TAB 2: C# BACKEND -->
+<div class="section" id="tab-2">
+<div class="container">
+  <div class="sec-title">🔷 C# Service Layer — Business Logic</div>
+  <div class="sec-sub">The service layer sits between the API controllers and the database. Controllers call services, services call the DB.</div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num purple">01</div>
+      <div class="step-title">Create DTOs — what you send to the browser</div>
+      <span class="step-tag cs">DTO</span>
+    </div>
+    <div class="step-body">
+      <p><strong>DTOs (Data Transfer Objects)</strong> are what you expose via the API. Never expose your DB model directly — DTOs let you control exactly what data the browser sees.</p>
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">DTOs/AccountDto.cs</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="k">namespace</span> <span class="n">FinanceApi.DTOs</span>;
+
+<span class="c">// What the API returns to the browser</span>
+<span class="k">public record</span> <span class="t">AccountDto</span>(
+    <span class="t">int</span> <span class="v">Id</span>,
+    <span class="k">string</span> <span class="v">OwnerName</span>,
+    <span class="k">string</span> <span class="v">AccountNumber</span>,
+    <span class="k">decimal</span> <span class="v">Balance</span>,
+    <span class="k">string</span> <span class="v">AccountType</span>,
+    <span class="k">bool</span> <span class="v">IsActive</span>,
+    <span class="t">DateTime</span> <span class="v">CreatedAt</span>
+);
+
+<span class="c">// What the browser sends to CREATE an account</span>
+<span class="k">public record</span> <span class="t">CreateAccountDto</span>(
+    <span class="k">string</span> <span class="v">OwnerName</span>,
+    <span class="k">string</span> <span class="v">AccountNumber</span>,
+    <span class="k">decimal</span> <span class="v">InitialBalance</span>,
+    <span class="k">string</span> <span class="v">AccountType</span>
+);
+
+<span class="c">// Transaction DTO</span>
+<span class="k">public record</span> <span class="t">TransactionDto</span>(
+    <span class="t">int</span> <span class="v">Id</span>,
+    <span class="t">int</span> <span class="v">AccountId</span>,
+    <span class="k">decimal</span> <span class="v">Amount</span>,
+    <span class="k">string</span> <span class="v">Type</span>,
+    <span class="k">string</span> <span class="v">Description</span>,
+    <span class="t">DateTime</span> <span class="v">Date</span>,
+    <span class="k">string</span> <span class="v">Status</span>
+);</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num purple">02</div>
+      <div class="step-title">Create AccountService — the business logic layer</div>
+      <span class="step-tag cs">SERVICE</span>
+    </div>
+    <div class="step-body">
+      <p>The service is a plain C# class. It uses <strong>Entity Framework Core</strong> to query SQL Server using LINQ — no raw SQL needed.</p>
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">Services/AccountService.cs</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="k">using</span> <span class="n">Microsoft.EntityFrameworkCore</span>;
+<span class="k">using</span> <span class="n">FinanceApi.Data</span>;
+<span class="k">using</span> <span class="n">FinanceApi.DTOs</span>;
+<span class="k">using</span> <span class="n">FinanceApi.Models</span>;
+
+<span class="k">namespace</span> <span class="n">FinanceApi.Services</span>;
+
+<span class="k">public interface</span> <span class="t">IAccountService</span>
+{
+    <span class="t">Task</span>&lt;<span class="t">List</span>&lt;<span class="t">AccountDto</span>&gt;&gt; <span class="m">GetAllAsync</span>(<span class="k">string</span>? <span class="v">type</span> = <span class="k">null</span>);
+    <span class="t">Task</span>&lt;<span class="t">AccountDto</span>?&gt; <span class="m">GetByIdAsync</span>(<span class="t">int</span> <span class="v">id</span>);
+    <span class="t">Task</span>&lt;<span class="t">AccountDto</span>&gt; <span class="m">CreateAsync</span>(<span class="t">CreateAccountDto</span> <span class="v">dto</span>);
+    <span class="t">Task</span>&lt;<span class="k">bool</span>&gt; <span class="m">DeleteAsync</span>(<span class="t">int</span> <span class="v">id</span>);
+    <span class="t">Task</span>&lt;<span class="t">List</span>&lt;<span class="t">TransactionDto</span>&gt;&gt; <span class="m">GetTransactionsAsync</span>(<span class="t">int</span> <span class="v">accountId</span>);
+}
+
+<span class="k">public class</span> <span class="t">AccountService</span> : <span class="t">IAccountService</span>
+{
+    <span class="k">private readonly</span> <span class="t">AppDbContext</span> <span class="v">_db</span>;
+
+    <span class="k">public</span> <span class="t">AccountService</span>(<span class="t">AppDbContext</span> <span class="v">db</span>) => <span class="v">_db</span> = <span class="v">db</span>;
+
+    <span class="c">// GET all accounts, optionally filtered by type</span>
+    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">List</span>&lt;<span class="t">AccountDto</span>&gt;&gt; <span class="m">GetAllAsync</span>(<span class="k">string</span>? <span class="v">type</span> = <span class="k">null</span>)
+    {
+        <span class="k">var</span> <span class="v">query</span> = <span class="v">_db</span>.Accounts.<span class="m">AsQueryable</span>();
+
+        <span class="k">if</span> (!<span class="k">string</span>.<span class="m">IsNullOrEmpty</span>(<span class="v">type</span>))
+            <span class="v">query</span> = <span class="v">query</span>.<span class="m">Where</span>(<span class="v">a</span> =&gt; <span class="v">a</span>.AccountType == <span class="v">type</span>);
+
+        <span class="k">return await</span> <span class="v">query</span>
+            .<span class="m">Select</span>(<span class="v">a</span> =&gt; <span class="k">new</span> <span class="t">AccountDto</span>(
+                <span class="v">a</span>.Id, <span class="v">a</span>.OwnerName, <span class="v">a</span>.AccountNumber,
+                <span class="v">a</span>.Balance, <span class="v">a</span>.AccountType, <span class="v">a</span>.IsActive, <span class="v">a</span>.CreatedAt))
+            .<span class="m">ToListAsync</span>();
+    }
+
+    <span class="c">// GET single account by ID</span>
+    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">AccountDto</span>?&gt; <span class="m">GetByIdAsync</span>(<span class="t">int</span> <span class="v">id</span>)
+    {
+        <span class="k">var</span> <span class="v">a</span> = <span class="k">await</span> <span class="v">_db</span>.Accounts.<span class="m">FindAsync</span>(<span class="v">id</span>);
+        <span class="k">if</span> (<span class="v">a</span> <span class="k">is null</span>) <span class="k">return null</span>;
+        <span class="k">return new</span> <span class="t">AccountDto</span>(<span class="v">a</span>.Id, <span class="v">a</span>.OwnerName, <span class="v">a</span>.AccountNumber,
+            <span class="v">a</span>.Balance, <span class="v">a</span>.AccountType, <span class="v">a</span>.IsActive, <span class="v">a</span>.CreatedAt);
+    }
+
+    <span class="c">// POST — create new account</span>
+    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">AccountDto</span>&gt; <span class="m">CreateAsync</span>(<span class="t">CreateAccountDto</span> <span class="v">dto</span>)
+    {
+        <span class="k">var</span> <span class="v">account</span> = <span class="k">new</span> <span class="t">Account</span>
+        {
+            <span class="v">OwnerName</span>     = <span class="v">dto</span>.OwnerName,
+            <span class="v">AccountNumber</span> = <span class="v">dto</span>.AccountNumber,
+            <span class="v">Balance</span>       = <span class="v">dto</span>.InitialBalance,
+            <span class="v">AccountType</span>   = <span class="v">dto</span>.AccountType
+        };
+        <span class="v">_db</span>.Accounts.<span class="m">Add</span>(<span class="v">account</span>);
+        <span class="k">await</span> <span class="v">_db</span>.<span class="m">SaveChangesAsync</span>();  <span class="c">// writes to SQL Server</span>
+
+        <span class="k">return new</span> <span class="t">AccountDto</span>(<span class="v">account</span>.Id, <span class="v">account</span>.OwnerName,
+            <span class="v">account</span>.AccountNumber, <span class="v">account</span>.Balance,
+            <span class="v">account</span>.AccountType, <span class="v">account</span>.IsActive, <span class="v">account</span>.CreatedAt);
+    }
+
+    <span class="c">// DELETE account</span>
+    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="k">bool</span>&gt; <span class="m">DeleteAsync</span>(<span class="t">int</span> <span class="v">id</span>)
+    {
+        <span class="k">var</span> <span class="v">account</span> = <span class="k">await</span> <span class="v">_db</span>.Accounts.<span class="m">FindAsync</span>(<span class="v">id</span>);
+        <span class="k">if</span> (<span class="v">account</span> <span class="k">is null</span>) <span class="k">return false</span>;
+        <span class="v">_db</span>.Accounts.<span class="m">Remove</span>(<span class="v">account</span>);
+        <span class="k">await</span> <span class="v">_db</span>.<span class="m">SaveChangesAsync</span>();
+        <span class="k">return true</span>;
+    }
+
+    <span class="c">// GET transactions for an account</span>
+    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">List</span>&lt;<span class="t">TransactionDto</span>&gt;&gt; <span class="m">GetTransactionsAsync</span>(<span class="t">int</span> <span class="v">accountId</span>)
+    {
+        <span class="k">return await</span> <span class="v">_db</span>.Transactions
+            .<span class="m">Where</span>(<span class="v">t</span> =&gt; <span class="v">t</span>.AccountId == <span class="v">accountId</span>)
+            .<span class="m">OrderByDescending</span>(<span class="v">t</span> =&gt; <span class="v">t</span>.Date)
+            .<span class="m">Select</span>(<span class="v">t</span> =&gt; <span class="k">new</span> <span class="t">TransactionDto</span>(
+                <span class="v">t</span>.Id, <span class="v">t</span>.AccountId, <span class="v">t</span>.Amount,
+                <span class="v">t</span>.Type, <span class="v">t</span>.Description, <span class="v">t</span>.Date, <span class="v">t</span>.Status))
+            .<span class="m">ToListAsync</span>();
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TAB 3: ASP.NET API -->
+<div class="section" id="tab-3">
+<div class="container">
+  <div class="sec-title">⚡ ASP.NET Core Web API — Controllers + Startup</div>
+  <div class="sec-sub">The API layer exposes HTTP routes. Program.cs wires everything together with Dependency Injection.</div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num blue">01</div>
+      <div class="step-title">Program.cs — startup, DI, CORS, Swagger</div>
+      <span class="step-tag api">STARTUP</span>
+    </div>
+    <div class="step-body">
+      <p>This is the <strong>entry point</strong>. Register your services, set up CORS (so your HTML page can call the API), add Swagger for testing.</p>
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">Program.cs</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="k">using</span> <span class="n">Microsoft.EntityFrameworkCore</span>;
+<span class="k">using</span> <span class="n">FinanceApi.Data</span>;
+<span class="k">using</span> <span class="n">FinanceApi.Services</span>;
+
+<span class="k">var</span> <span class="v">builder</span> = <span class="t">WebApplication</span>.<span class="m">CreateBuilder</span>(<span class="v">args</span>);
+
+<span class="c">// ── Database ──────────────────────────────────────────────</span>
+<span class="v">builder</span>.Services.<span class="m">AddDbContext</span>&lt;<span class="t">AppDbContext</span>&gt;(<span class="v">opt</span> =&gt;
+    <span class="v">opt</span>.<span class="m">UseSqlServer</span>(<span class="v">builder</span>.Configuration
+        .<span class="m">GetConnectionString</span>(<span class="s">"DefaultConnection"</span>)));
+
+<span class="c">// ── Dependency Injection ──────────────────────────────────</span>
+<span class="v">builder</span>.Services.<span class="m">AddScoped</span>&lt;<span class="t">IAccountService</span>, <span class="t">AccountService</span>&gt;();
+
+<span class="c">// ── CORS — allow HTML file to call this API ───────────────</span>
+<span class="v">builder</span>.Services.<span class="m">AddCors</span>(<span class="v">options</span> =&gt;
+{
+    <span class="v">options</span>.<span class="m">AddPolicy</span>(<span class="s">"AllowAll"</span>, <span class="v">policy</span> =&gt;
+        <span class="v">policy</span>.<span class="m">AllowAnyOrigin</span>()
+              .<span class="m">AllowAnyHeader</span>()
+              .<span class="m">AllowAnyMethod</span>());
+});
+
+<span class="v">builder</span>.Services.<span class="m">AddControllers</span>();
+<span class="v">builder</span>.Services.<span class="m">AddEndpointsApiExplorer</span>();
+<span class="v">builder</span>.Services.<span class="m">AddSwaggerGen</span>(<span class="v">c</span> =&gt;
+{
+    <span class="v">c</span>.<span class="m">SwaggerDoc</span>(<span class="s">"v1"</span>, <span class="k">new</span> { <span class="v">Title</span> = <span class="s">"Finance API"</span>, <span class="v">Version</span> = <span class="s">"v1"</span> });
+});
+
+<span class="k">var</span> <span class="v">app</span> = <span class="v">builder</span>.<span class="m">Build</span>();
+
+<span class="c">// ── Auto-apply migrations on startup ─────────────────────</span>
+<span class="k">using</span> (<span class="k">var</span> <span class="v">scope</span> = <span class="v">app</span>.Services.<span class="m">CreateScope</span>())
+{
+    <span class="k">var</span> <span class="v">db</span> = <span class="v">scope</span>.ServiceProvider.<span class="m">GetRequiredService</span>&lt;<span class="t">AppDbContext</span>&gt;();
+    <span class="v">db</span>.Database.<span class="m">Migrate</span>();  <span class="c">// creates DB if it doesn't exist</span>
+}
+
+<span class="c">// ── Middleware pipeline ───────────────────────────────────</span>
+<span class="k">if</span> (<span class="v">app</span>.Environment.<span class="m">IsDevelopment</span>())
+{
+    <span class="v">app</span>.<span class="m">UseSwagger</span>();
+    <span class="v">app</span>.<span class="m">UseSwaggerUI</span>();  <span class="c">// visit /swagger to test API</span>
+}
+
+<span class="v">app</span>.<span class="m">UseCors</span>(<span class="s">"AllowAll"</span>);   <span class="c">// MUST be before MapControllers</span>
+<span class="v">app</span>.<span class="m">UseHttpsRedirection</span>();
+<span class="v">app</span>.<span class="m">MapControllers</span>();
+
+<span class="v">app</span>.<span class="m">Run</span>();</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num blue">02</div>
+      <div class="step-title">AccountsController — the HTTP endpoints</div>
+      <span class="step-tag api">CONTROLLER</span>
+    </div>
+    <div class="step-body">
+      <p>Controllers define your <strong>REST routes</strong>. Each method maps to a HTTP verb (GET, POST, PUT, DELETE). The controller calls the service — it does NO business logic itself.</p>
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">Controllers/AccountsController.cs</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="k">using</span> <span class="n">Microsoft.AspNetCore.Mvc</span>;
+<span class="k">using</span> <span class="n">FinanceApi.DTOs</span>;
+<span class="k">using</span> <span class="n">FinanceApi.Services</span>;
+
+<span class="k">namespace</span> <span class="n">FinanceApi.Controllers</span>;
+
+[<span class="m">ApiController</span>]
+[<span class="m">Route</span>(<span class="s">"api/[controller]"</span>)]   <span class="c">// → /api/accounts</span>
+<span class="k">public class</span> <span class="t">AccountsController</span> : <span class="t">ControllerBase</span>
+{
+    <span class="k">private readonly</span> <span class="t">IAccountService</span> <span class="v">_svc</span>;
+
+    <span class="k">public</span> <span class="t">AccountsController</span>(<span class="t">IAccountService</span> <span class="v">svc</span>) => <span class="v">_svc</span> = <span class="v">svc</span>;
+
+    <span class="c">// GET /api/accounts           — all accounts</span>
+    <span class="c">// GET /api/accounts?type=Government — filtered</span>
+    [<span class="m">HttpGet</span>]
+    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">IActionResult</span>&gt; <span class="m">GetAll</span>([<span class="m">FromQuery</span>] <span class="k">string</span>? <span class="v">type</span>)
+    {
+        <span class="k">var</span> <span class="v">accounts</span> = <span class="k">await</span> <span class="v">_svc</span>.<span class="m">GetAllAsync</span>(<span class="v">type</span>);
+        <span class="k">return</span> <span class="m">Ok</span>(<span class="v">accounts</span>);   <span class="c">// 200 + JSON array</span>
+    }
+
+    <span class="c">// GET /api/accounts/3  — single account</span>
+    [<span class="m">HttpGet</span>(<span class="s">"{id}"</span>)]
+    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">IActionResult</span>&gt; <span class="m">GetById</span>(<span class="t">int</span> <span class="v">id</span>)
+    {
+        <span class="k">var</span> <span class="v">account</span> = <span class="k">await</span> <span class="v">_svc</span>.<span class="m">GetByIdAsync</span>(<span class="v">id</span>);
+        <span class="k">return</span> <span class="v">account</span> <span class="k">is null</span> ? <span class="m">NotFound</span>() : <span class="m">Ok</span>(<span class="v">account</span>);
+    }
+
+    <span class="c">// POST /api/accounts  — create account</span>
+    [<span class="m">HttpPost</span>]
+    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">IActionResult</span>&gt; <span class="m">Create</span>([<span class="m">FromBody</span>] <span class="t">CreateAccountDto</span> <span class="v">dto</span>)
+    {
+        <span class="k">if</span> (!<span class="v">ModelState</span>.IsValid) <span class="k">return</span> <span class="m">BadRequest</span>(<span class="v">ModelState</span>);
+        <span class="k">var</span> <span class="v">created</span> = <span class="k">await</span> <span class="v">_svc</span>.<span class="m">CreateAsync</span>(<span class="v">dto</span>);
+        <span class="k">return</span> <span class="m">CreatedAtAction</span>(<span class="k">nameof</span>(<span class="m">GetById</span>),
+            <span class="k">new</span> { <span class="v">id</span> = <span class="v">created</span>.Id }, <span class="v">created</span>);   <span class="c">// 201 Created</span>
+    }
+
+    <span class="c">// DELETE /api/accounts/3</span>
+    [<span class="m">HttpDelete</span>(<span class="s">"{id}"</span>)]
+    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">IActionResult</span>&gt; <span class="m">Delete</span>(<span class="t">int</span> <span class="v">id</span>)
+    {
+        <span class="k">var</span> <span class="v">deleted</span> = <span class="k">await</span> <span class="v">_svc</span>.<span class="m">DeleteAsync</span>(<span class="v">id</span>);
+        <span class="k">return</span> <span class="v">deleted</span> ? <span class="m">NoContent</span>() : <span class="m">NotFound</span>();  <span class="c">// 204 or 404</span>
+    }
+
+    <span class="c">// GET /api/accounts/3/transactions</span>
+    [<span class="m">HttpGet</span>(<span class="s">"{id}/transactions"</span>)]
+    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">IActionResult</span>&gt; <span class="m">GetTransactions</span>(<span class="t">int</span> <span class="v">id</span>)
+    {
+        <span class="k">var</span> <span class="v">txns</span> = <span class="k">await</span> <span class="v">_svc</span>.<span class="m">GetTransactionsAsync</span>(<span class="v">id</span>);
+        <span class="k">return</span> <span class="m">Ok</span>(<span class="v">txns</span>);
+    }
+}</pre>
+      </div>
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div>After running the API, visit <strong>https://localhost:7000/swagger</strong> to get an interactive UI to test every endpoint without writing any frontend code yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num blue">03</div>
+      <div class="step-title">Run the API</div>
+      <span class="step-tag api">RUN</span>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>dotnet run
+
+<span class="c"># Output:</span>
+<span class="c"># Now listening on: https://localhost:7000</span>
+<span class="c"># Now listening on: http://localhost:5000</span>
+
+<span class="c"># Test it immediately:</span>
+curl https://localhost:7000/api/accounts
+<span class="c"># Returns JSON array of accounts from your SQL Server DB!</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TAB 4: HTML FRONTEND -->
+<div class="section" id="tab-4">
+<div class="container">
+  <div class="sec-title">🌐 HTML Frontend — Calls the ASP.NET API</div>
+  <div class="sec-sub">A clean, professional frontend that uses the Fetch API to talk to your locally running ASP.NET Core backend</div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num green">01</div>
+      <div class="step-title">The complete frontend — index.html</div>
+      <span class="step-tag html">HTML + JS</span>
+    </div>
+    <div class="step-body">
+      <p>Save this as <code>frontend/index.html</code> and open it in your browser. It connects directly to your local ASP.NET API.</p>
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div>Change <strong>localhost:7000</strong> to match whatever port your API runs on (check terminal output).</div>
+      </div>
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">frontend/index.html</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="c">&lt;!-- Full bank/government data portal frontend --&gt;</span>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Finance Portal&lt;/title&gt;
+  &lt;style&gt;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #1e293b; }
+
+    header {
+      background: linear-gradient(135deg, #1e3a5f, #0f2340);
+      color: white; padding: 20px 32px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    header h1 { font-size: 22px; font-weight: 700; }
+    header p  { font-size: 13px; opacity: 0.7; margin-top: 2px; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%;
+      background: #10b981; margin-left: auto; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    .toolbar {
+      background: white; border-bottom: 1px solid #e2e8f0;
+      padding: 12px 32px; display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    button {
+      padding: 8px 16px; border: 1px solid #cbd5e1; border-radius: 6px;
+      cursor: pointer; font-size: 13px; font-weight: 500; background: white;
+      transition: all 0.15s;
+    }
+    button:hover { background: #1e3a5f; color: white; border-color: #1e3a5f; }
+    button.primary { background: #1e3a5f; color: white; border-color: #1e3a5f; }
+    button.danger  { background: #dc2626; color: white; border-color: #dc2626; }
+    input, select {
+      padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+      font-size: 13px; min-width: 160px;
+    }
+
+    main { padding: 24px 32px; }
+    #status { margin-bottom: 16px; font-size: 13px; color: #64748b; }
+    #status.error { color: #dc2626; }
+    #status.success { color: #059669; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .card {
+      background: white; border-radius: 10px; padding: 20px;
+      border: 1px solid #e2e8f0; transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .avatar {
+      width: 42px; height: 42px; border-radius: 8px; display: flex;
+      align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+    }
+    .av-gov  { background: #dbeafe; }
+    .av-bank { background: #fef3c7; }
+    .av-user { background: #d1fae5; }
+    .card h3 { font-size: 15px; font-weight: 600; }
+    .card .acn { font-size: 12px; color: #94a3b8; font-family: monospace; }
+    .balance { font-size: 22px; font-weight: 700; color: #1e293b; margin: 10px 0 4px; }
+    .balance.large { color: #1d4ed8; }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px;
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .badge.govt   { background: #dbeafe; color: #1d4ed8; }
+    .badge.bank   { background: #fef3c7; color: #92400e; }
+    .badge.check  { background: #d1fae5; color: #065f46; }
+    .badge.save   { background: #f3e8ff; color: #6b21a8; }
+    .card-footer { display: flex; gap: 8px; margin-top: 14px; }
+
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 100;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: 12px; padding: 28px;
+      width: 420px; max-width: 92vw;
+    }
+    .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 12px; font-weight: 600;
+      color: #64748b; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .field input, .field select { width: 100%; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+    #txn-panel {
+      display: none; background: white; border: 1px solid #e2e8f0;
+      border-radius: 10px; margin-bottom: 20px; overflow: hidden;
+    }
+    #txn-panel.open { display: block; }
+    #txn-header { background: #1e3a5f; color: white; padding: 14px 20px; font-weight: 600; font-size: 14px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 10px 16px; background: #f8fafc;
+      color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0; font-size: 11px; text-transform: uppercase; }
+    td { padding: 10px 16px; border-bottom: 1px solid #f1f5f9; }
+    tr:last-child td { border-bottom: none; }
+    .credit { color: #059669; font-weight: 600; }
+    .debit  { color: #dc2626; font-weight: 600; }
+    .loading { text-align: center; padding: 40px; color: #94a3b8; font-size: 14px; }
+    .empty  { text-align: center; padding: 60px; color: #94a3b8; }
+    .empty .icon { font-size: 48px; margin-bottom: 12px; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;header&gt;
+  &lt;div&gt;
+    &lt;h1&gt;🏦 Finance Data Portal&lt;/h1&gt;
+    &lt;p&gt;Connected to ASP.NET Core API — localhost:7000&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="status-dot" id="statusDot" title="API Status"&gt;&lt;/div&gt;
+&lt;/header&gt;
+
+&lt;div class="toolbar"&gt;
+  &lt;button class="primary" onclick="loadAccounts()"&gt;🔄 Refresh&lt;/button&gt;
+  &lt;button onclick="openModal()"&gt;➕ New Account&lt;/button&gt;
+  &lt;select id="typeFilter" onchange="loadAccounts()"&gt;
+    &lt;option value=""&gt;All Types&lt;/option&gt;
+    &lt;option value="Government"&gt;Government&lt;/option&gt;
+    &lt;option value="Reserve"&gt;Reserve&lt;/option&gt;
+    &lt;option value="Checking"&gt;Checking&lt;/option&gt;
+    &lt;option value="Savings"&gt;Savings&lt;/option&gt;
+  &lt;/select&gt;
+  &lt;input id="search" placeholder="Search by name..." oninput="filterCards()" /&gt;
+&lt;/div&gt;
+
+&lt;main&gt;
+  &lt;div id="status"&gt;Loading accounts...&lt;/div&gt;
+  &lt;div id="txn-panel"&gt;
+    &lt;div id="txn-header"&gt;Transactions&lt;/div&gt;
+    &lt;table&gt;
+      &lt;thead&gt;&lt;tr&gt;
+        &lt;th&gt;Date&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;
+        &lt;th&gt;Type&lt;/th&gt;&lt;th&gt;Amount&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;
+      &lt;/tr&gt;&lt;/thead&gt;
+      &lt;tbody id="txn-body"&gt;&lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+  &lt;div class="grid" id="accountGrid"&gt;
+    &lt;div class="loading"&gt;⏳ Connecting to API...&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/main&gt;
+
+&lt;!-- CREATE ACCOUNT MODAL --&gt;
+&lt;div class="modal-overlay" id="modal"&gt;
+  &lt;div class="modal"&gt;
+    &lt;h2&gt;➕ Create New Account&lt;/h2&gt;
+    &lt;div class="field"&gt;
+      &lt;label&gt;Owner Name&lt;/label&gt;
+      &lt;input id="f-name" placeholder="e.g. Ministry of Transport" /&gt;
+    &lt;/div&gt;
+    &lt;div class="field"&gt;
+      &lt;label&gt;Account Number&lt;/label&gt;
+      &lt;input id="f-acn" placeholder="e.g. GOV-002" /&gt;
+    &lt;/div&gt;
+    &lt;div class="field"&gt;
+      &lt;label&gt;Initial Balance ($)&lt;/label&gt;
+      &lt;input id="f-bal" type="number" placeholder="0.00" /&gt;
+    &lt;/div&gt;
+    &lt;div class="field"&gt;
+      &lt;label&gt;Account Type&lt;/label&gt;
+      &lt;select id="f-type"&gt;
+        &lt;option&gt;Government&lt;/option&gt;
+        &lt;option&gt;Reserve&lt;/option&gt;
+        &lt;option&gt;Checking&lt;/option&gt;
+        &lt;option&gt;Savings&lt;/option&gt;
+      &lt;/select&gt;
+    &lt;/div&gt;
+    &lt;div class="modal-actions"&gt;
+      &lt;button onclick="closeModal()"&gt;Cancel&lt;/button&gt;
+      &lt;button class="primary" onclick="createAccount()"&gt;Create Account&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  const API = 'https://localhost:7000/api';  // ← change port if needed
+  let allCards = [];
+
+  // ── LOAD ACCOUNTS ─────────────────────────────────────────
+  async function loadAccounts() {
+    const type = document.getElementById('typeFilter').value;
+    const url  = type ? `${API}/accounts?type=${type}` : `${API}/accounts`;
+    setStatus('Loading...', '');
+
+    try {
+      const res  = await fetch(url);
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
+      const data = await res.json();
+      renderCards(data);
+      setStatus(`✅ ${data.length} accounts loaded`, 'success');
+      document.getElementById('statusDot').style.background = '#10b981';
+    } catch (err) {
+      setStatus(`❌ Cannot reach API: ${err.message}. Is the API running?`, 'error');
+      document.getElementById('statusDot').style.background = '#ef4444';
+      document.getElementById('accountGrid').innerHTML =
+        `&lt;div class="empty"&gt;&lt;div class="icon"&gt;⚠️&lt;/div&gt;
+         Could not connect to API.&lt;br&gt;Run: &lt;code&gt;dotnet run&lt;/code&gt;&lt;/div&gt;`;
+    }
+  }
+
+  // ── RENDER CARDS ──────────────────────────────────────────
+  function renderCards(accounts) {
+    allCards = accounts;
+    if (!accounts.length) {
+      document.getElementById('accountGrid').innerHTML =
+        `&lt;div class="empty"&gt;&lt;div class="icon"&gt;🏦&lt;/div&gt;No accounts found.&lt;/div&gt;`;
+      return;
+    }
+    document.getElementById('accountGrid').innerHTML = accounts.map(a =&gt; {
+      const icons = { Government:'🏛️', Reserve:'🏦', Checking:'💳', Savings:'🪙' };
+      const avClass = { Government:'av-gov', Reserve:'av-bank',
+                        Checking:'av-user', Savings:'av-user' };
+      const badgeClass = { Government:'govt', Reserve:'bank',
+                           Checking:'check', Savings:'save' };
+      const big = a.balance &gt; 1_000_000;
+      return `
+      &lt;div class="card" id="card-${a.id}"&gt;
+        &lt;div class="card-header"&gt;
+          &lt;div class="avatar ${avClass[a.accountType]||'av-user'}"&gt;
+            ${icons[a.accountType]||'👤'}
+          &lt;/div&gt;
+          &lt;div&gt;
+            &lt;div class="card-h3"&gt;&lt;strong&gt;${a.ownerName}&lt;/strong&gt;&lt;/div&gt;
+            &lt;div class="acn"&gt;${a.accountNumber}&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="balance ${big?'large':''}"&gt;
+          $${a.balance.toLocaleString('en-US', {minimumFractionDigits:2})}
+        &lt;/div&gt;
+        &lt;span class="badge ${badgeClass[a.accountType]||'check'}"&gt;
+          ${a.accountType}
+        &lt;/span&gt;
+        &lt;span style="font-size:11px;color:#94a3b8;margin-left:8px;"&gt;
+          ${a.isActive ? '✅ Active' : '❌ Inactive'}
+        &lt;/span&gt;
+        &lt;div class="card-footer"&gt;
+          &lt;button onclick="viewTransactions(${a.id}, '${a.ownerName}')"&gt;
+            📋 Transactions
+          &lt;/button&gt;
+          &lt;button class="danger" onclick="deleteAccount(${a.id})"&gt;🗑&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;`;
+    }).join('');
+  }
+
+  // ── SEARCH FILTER ─────────────────────────────────────────
+  function filterCards() {
+    const q = document.getElementById('search').value.toLowerCase();
+    const filtered = allCards.filter(a =&gt;
+      a.ownerName.toLowerCase().includes(q) ||
+      a.accountNumber.toLowerCase().includes(q));
+    renderCards(filtered);
+  }
+
+  // ── VIEW TRANSACTIONS ─────────────────────────────────────
+  async function viewTransactions(id, name) {
+    const panel = document.getElementById('txn-panel');
+    document.getElementById('txn-header').textContent = `Transactions — ${name}`;
+    document.getElementById('txn-body').innerHTML = '&lt;tr&gt;&lt;td colspan="5" class="loading"&gt;Loading...&lt;/td&gt;&lt;/tr&gt;';
+    panel.classList.add('open');
+    panel.scrollIntoView({ behavior: 'smooth' });
+
+    try {
+      const res  = await fetch(`${API}/accounts/${id}/transactions`);
+      const txns = await res.json();
+      if (!txns.length) {
+        document.getElementById('txn-body').innerHTML =
+          '&lt;tr&gt;&lt;td colspan="5" class="loading"&gt;No transactions yet.&lt;/td&gt;&lt;/tr&gt;';
+        return;
+      }
+      document.getElementById('txn-body').innerHTML = txns.map(t =&gt; `
+        &lt;tr&gt;
+          &lt;td&gt;${new Date(t.date).toLocaleDateString()}&lt;/td&gt;
+          &lt;td&gt;${t.description || '—'}&lt;/td&gt;
+          &lt;td&gt;${t.type}&lt;/td&gt;
+          &lt;td class="${t.type==='Credit'?'credit':'debit'}"&gt;
+            ${t.type==='Credit'?'+':'-'}$${t.amount.toFixed(2)}
+          &lt;/td&gt;
+          &lt;td&gt;${t.status}&lt;/td&gt;
+        &lt;/tr&gt;`).join('');
+    } catch { document.getElementById('txn-body').innerHTML = '&lt;tr&gt;&lt;td colspan="5"&gt;Error loading.&lt;/td&gt;&lt;/tr&gt;'; }
+  }
+
+  // ── CREATE ACCOUNT ────────────────────────────────────────
+  async function createAccount() {
+    const body = {
+      ownerName:      document.getElementById('f-name').value,
+      accountNumber:  document.getElementById('f-acn').value,
+      initialBalance: parseFloat(document.getElementById('f-bal').value) || 0,
+      accountType:    document.getElementById('f-type').value
+    };
+    if (!body.ownerName || !body.accountNumber) {
+      alert('Name and account number are required.'); return;
+    }
+    try {
+      const res = await fetch(`${API}/accounts`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      closeModal();
+      await loadAccounts();
+      setStatus('✅ Account created successfully!', 'success');
+    } catch (err) { alert('Error: ' + err.message); }
+  }
+
+  // ── DELETE ACCOUNT ────────────────────────────────────────
+  async function deleteAccount(id) {
+    if (!confirm('Delete this account?')) return;
+    try {
+      const res = await fetch(`${API}/accounts/${id}`, { method: 'DELETE' });
+      if (res.ok) { await loadAccounts(); setStatus('🗑️ Account deleted.', 'success'); }
+      else setStatus('Could not delete.', 'error');
+    } catch { setStatus('API error.', 'error'); }
+  }
+
+  // ── HELPERS ────────────────────────────────────────────────
+  function setStatus(msg, cls) {
+    const el = document.getElementById('status');
+    el.textContent = msg; el.className = cls;
+  }
+  function openModal()  { document.getElementById('modal').classList.add('open'); }
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  document.getElementById('modal').onclick = e =&gt;
+    { if (e.target === e.currentTarget) closeModal(); };
+
+  loadAccounts();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TAB 5: WIRE IT UP -->
+<div class="section" id="tab-5">
+<div class="container">
+  <div class="sec-title">🔌 Wire It All Up — Run Order</div>
+  <div class="sec-sub">Step-by-step: start the API, check the DB, open the frontend</div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num green">01</div>
+      <div class="step-title">Complete run sequence</div>
+      <span class="step-tag cs">RUN</span>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+        <div class="code-bar"><span class="code-lang">bash — full flow</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="c"># 1. Create the project</span>
+dotnet new webapi -n FinanceApi --use-controllers
+cd FinanceApi
+
+<span class="c"># 2. Install packages</span>
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Swashbuckle.AspNetCore
+
+<span class="c"># 3. Add all the files (Models, Data, Services, Controllers, DTOs)</span>
+<span class="c">#    — copy all code from tabs 2, 3, 4</span>
+
+<span class="c"># 4. Run migrations (creates SQL Server DB + tables)</span>
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+
+<span class="c"># 5. Run the API</span>
+dotnet run
+
+<span class="c"># 6. Open Swagger to test API</span>
+<span class="c">#    → https://localhost:7000/swagger</span>
+
+<span class="c"># 7. Open frontend/index.html in browser</span>
+<span class="c">#    → Double-click the file or use Live Server extension in VS Code</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num green">02</div>
+      <div class="step-title">What each layer actually does — explained</div>
+      <span class="step-tag api">DEEP DIVE</span>
+    </div>
+    <div class="step-body">
+      <p>Here is what happens when you click <strong>"Refresh"</strong> in the browser:</p>
+      <ol>
+        <li><strong>Browser</strong> calls <code>fetch("https://localhost:7000/api/accounts")</code></li>
+        <li><strong>ASP.NET Core</strong> receives the HTTP GET request on port 7000</li>
+        <li><strong>Router</strong> matches route <code>/api/accounts</code> → <code>AccountsController.GetAll()</code></li>
+        <li><strong>Controller</strong> calls <code>_svc.GetAllAsync()</code> — the service layer</li>
+        <li><strong>Service</strong> runs <code>_db.Accounts.Select(...).ToListAsync()</code></li>
+        <li><strong>Entity Framework</strong> translates that LINQ query to <code>SELECT * FROM Accounts</code></li>
+        <li><strong>SQL Server LocalDB</strong> executes the SQL and returns rows</li>
+        <li><strong>EF Core</strong> maps rows → C# objects → DTOs</li>
+        <li><strong>Controller</strong> returns <code>Ok(accounts)</code> → HTTP 200 with JSON body</li>
+        <li><strong>Browser</strong> receives JSON, calls <code>renderCards(data)</code>, cards appear</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num green">03</div>
+      <div class="step-title">Common errors and fixes</div>
+      <span class="step-tag warn">TROUBLESHOOT</span>
+    </div>
+    <div class="step-body">
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>CORS error in browser:</strong> Make sure <code>app.UseCors("AllowAll")</code> is in Program.cs BEFORE <code>app.MapControllers()</code>. Order matters.</div>
+      </div>
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>SSL certificate error (fetch fails):</strong> Run <code>dotnet dev-certs https --trust</code> in terminal, then restart browser.</div>
+      </div>
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>Cannot connect to LocalDB:</strong> Run <code>SqlLocalDB start</code> in terminal, or open Visual Studio once (it starts LocalDB automatically).</div>
+      </div>
+      <div class="callout tip">
+        <span class="callout-icon">✅</span>
+        <div><strong>Use http instead of https for the frontend</strong> if cert issues: change the API const to <code>http://localhost:5000/api</code> and use the HTTP port shown in <code>dotnet run</code> output.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num green">04</div>
+      <div class="step-title">Next steps — make it production-grade</div>
+      <span class="step-tag api">NEXT</span>
+    </div>
+    <div class="step-body">
+      <ul>
+        <li><strong>Authentication</strong> — add <code>Microsoft.AspNetCore.Authentication.JwtBearer</code> to require JWT tokens (how banks actually secure APIs)</li>
+        <li><strong>Pagination</strong> — add <code>?page=1&amp;size=20</code> query params to avoid loading 10,000 rows</li>
+        <li><strong>Validation</strong> — add <code>FluentValidation</code> package for complex business rules</li>
+        <li><strong>Logging</strong> — use <code>ILogger&lt;T&gt;</code> injected into services (already built into ASP.NET)</li>
+        <li><strong>Unit Tests</strong> — add <code>xUnit</code> + mock <code>AppDbContext</code> with in-memory provider</li>
+        <li><strong>React/Angular frontend</strong> — replace the HTML with a proper SPA using the same API</li>
+        <li><strong>Deploy</strong> — publish to Azure App Service with <code>dotnet publish</code> + Azure SQL for the DB</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer>
+  FinanceApi Tutorial · ASP.NET Core 8 + EF Core + SQL Server LocalDB + HTML
+</footer>
+
+<script>
+  // Tab switching
+  function showTab(n) {
+    document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===n));
+    document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===n));
+    const total = 6;
+    document.getElementById('progress').style.width = ((n+1)/total*100)+'%';
+  }
+
+  // Copy code
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'copied!'; btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
+  // Progress
+  document.getElementById('progress').style.width = '16.6%';
+
+  // Scroll progress
+  window.addEventListener('scroll', () => {
+    const tab = document.querySelector('.section.active');
+    if (!tab) return;
+    const tabIndex = [...document.querySelectorAll('.section')].indexOf(tab);
+    const scrolled = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    const base = (tabIndex / 6) * 100;
+    const extra = (scrolled / 6) * 100;
+    document.getElementById('progress').style.width = Math.min(base + 16.6 + extra * 0.3, (tabIndex+1)*16.6) + '%';
+  });
+</script>
+
+</body>
+</html>
