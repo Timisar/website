@@ -4,23 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Suyog Thapae | BCA Undergraduate</title>
+    <title>Suyog Thapa | BCA Undergraduate</title>
 
     <meta name="description"
-          content="Portfolio of Your Name, a BCA undergraduate interested in programming, web development, and databases.">
+          content="Portfolio of Suyog Thapa, a BCA undergraduate interested in programming, web development, databases, and software development.">
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+    <!-- Background decoration -->
+    <div class="background-glow glow-1"></div>
+    <div class="background-glow glow-2"></div>
+
+
     <!-- Navigation -->
-    <header class="header">
+    <header class="header" id="header">
         <nav class="nav container">
 
-            <a href="#home" class="logo">SuyogThapa</a>
+            <a href="#home" class="logo">
+                Suyog<span>Thapa</span>
+            </a>
 
-            <ul class="nav-links">
+            <div class="nav-actions">
+
+                <button
+                    class="theme-toggle"
+                    id="themeToggle"
+                    aria-label="Toggle theme">
+                    ☾
+                </button>
+
+                <button
+                    class="menu-toggle"
+                    id="menuToggle"
+                    aria-label="Open navigation">
+                    ☰
+                </button>
+
+            </div>
+
+            <ul class="nav-links" id="navLinks">
                 <li><a href="#about">About</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#education">Education</a></li>
@@ -36,164 +61,320 @@
 
         <!-- Hero -->
         <section id="home" class="hero">
+
             <div class="container hero-content">
 
-                <p class="eyebrow">BCA Undergraduate</p>
+                <div class="hero-badge">
+                    <span class="status-dot"></span>
+                    BCA Undergraduate
+                </div>
 
-                <h1>Your Name</h1>
+                <p class="eyebrow">Hello, I'm</p>
 
-                <p class="hero-text">
-                    Programming · Web Development · Databases
+                <h1>
+                    Suyog <span>Thapa</span>
+                </h1>
+
+                <p class="hero-description">
+                    An undergraduate learning computer applications,
+                    building software, and exploring the world of
+                    web development.
                 </p>
 
                 <div class="hero-buttons">
+
                     <a href="#projects" class="button primary">
                         View Projects
+                        <span>→</span>
                     </a>
 
                     <a href="#contact" class="button secondary">
-                        Contact
+                        Contact Me
                     </a>
+
+                </div>
+
+                <div class="hero-tech">
+                    <span>HTML</span>
+                    <span>CSS</span>
+                    <span>JavaScript</span>
+                    <span>PHP</span>
+                    <span>Java</span>
                 </div>
 
             </div>
+
+            <a href="#about" class="scroll-indicator">
+                <span></span>
+                Scroll to explore
+            </a>
+
         </section>
 
 
         <!-- About -->
-        <section id="about" class="section">
+        <section id="about" class="section reveal">
+
             <div class="container">
 
-                <p class="section-label">About</p>
+                <p class="section-label">01 — About</p>
 
-                <h2>About Me</h2>
+                <h2>
+                    Learning today.
+                    <span>Building tomorrow.</span>
+                </h2>
 
-                <p class="section-text">
-                    Undergraduate BCA student under Tribhuvan University
-                    with an academic background in programming, web
-                    technologies, databases, and computer applications.
-                    Interested in gaining practical experience and
-                    developing technical and professional skills.
-                </p>
+                <div class="about-grid">
+
+                    <div class="about-main">
+
+                        <p class="large-text">
+                            I'm a BCA undergraduate under Tribhuvan
+                            University with an interest in programming,
+                            web technologies, databases, and software
+                            development.
+                        </p>
+
+                        <p>
+                            I enjoy learning how things work, turning
+                            ideas into working applications, and
+                            improving my technical skills through
+                            practical projects.
+                        </p>
+
+                    </div>
+
+                    <div class="about-stats">
+
+                        <div class="stat">
+                            <strong>BCA</strong>
+                            <span>Undergraduate</span>
+                        </div>
+
+                        <div class="stat">
+                            <strong>04</strong>
+                            <span>Current Semester</span>
+                        </div>
+
+                        <div class="stat">
+                            <strong>∞</strong>
+                            <span>Things to Learn</span>
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
+
         </section>
 
 
         <!-- Skills -->
-        <section id="skills" class="section section-alt">
+        <section id="skills" class="section section-alt reveal">
+
             <div class="container">
 
-                <p class="section-label">Skills</p>
+                <p class="section-label">02 — Skills</p>
 
-                <h2>Technical Skills</h2>
+                <h2>
+                    Technologies I
+                    <span>work with.</span>
+                </h2>
 
                 <div class="skills-grid">
 
-                    <div class="skill-group">
+                    <div class="skill-card">
+                        <div class="skill-number">01</div>
                         <h3>Programming</h3>
-                        <p>C · C++ · Java · JavaScript</p>
+
+                        <div class="tags">
+                            <span>C</span>
+                            <span>C++</span>
+                            <span>Java</span>
+                            <span>JavaScript</span>
+                        </div>
                     </div>
 
-                    <div class="skill-group">
-                        <h3>Web</h3>
-                        <p>HTML · CSS · JavaScript · PHP</p>
+                    <div class="skill-card">
+                        <div class="skill-number">02</div>
+                        <h3>Web Development</h3>
+
+                        <div class="tags">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JavaScript</span>
+                            <span>PHP</span>
+                        </div>
                     </div>
 
-                    <div class="skill-group">
+                    <div class="skill-card">
+                        <div class="skill-number">03</div>
                         <h3>Databases</h3>
-                        <p>MySQL · SQLite · PostgreSQL</p>
+
+                        <div class="tags">
+                            <span>MySQL</span>
+                            <span>SQLite</span>
+                            <span>PostgreSQL</span>
+                        </div>
                     </div>
 
-                    <div class="skill-group">
+                    <div class="skill-card">
+                        <div class="skill-number">04</div>
                         <h3>Frameworks</h3>
-                        <p>Laravel · Spring · React.js · Inertia.js</p>
+
+                        <div class="tags">
+                            <span>Laravel</span>
+                            <span>Spring</span>
+                            <span>React</span>
+                            <span>Inertia</span>
+                        </div>
                     </div>
 
-                    <div class="skill-group">
+                    <div class="skill-card">
+                        <div class="skill-number">05</div>
                         <h3>Tools</h3>
-                        <p>Git · GitHub · Maven · Gradle</p>
+
+                        <div class="tags">
+                            <span>Git</span>
+                            <span>GitHub</span>
+                            <span>Maven</span>
+                            <span>Gradle</span>
+                        </div>
                     </div>
 
-                    <div class="skill-group">
+                    <div class="skill-card">
+                        <div class="skill-number">06</div>
                         <h3>Concepts</h3>
-                        <p>OOP · DBMS · Data Structures</p>
+
+                        <div class="tags">
+                            <span>OOP</span>
+                            <span>DBMS</span>
+                            <span>Data Structures</span>
+                        </div>
                     </div>
 
                 </div>
 
             </div>
+
         </section>
 
 
         <!-- Education -->
-        <section id="education" class="section">
+        <section id="education" class="section reveal">
+
             <div class="container">
 
-                <p class="section-label">Education</p>
+                <p class="section-label">03 — Education</p>
 
-                <h2>Education</h2>
+                <h2>
+                    Academic
+                    <span>journey.</span>
+                </h2>
 
-                <div class="education-item">
+                <div class="timeline">
 
-                    <div>
-                        <h3>Bachelor of Computer Applications (BCA)</h3>
+                    <div class="timeline-item">
 
-                        <p>
-                            Tribhuvan University
-                        </p>
-                    </div>
+                        <div class="timeline-dot"></div>
 
-                    <div class="education-date">
-                        Semester 4
+                        <div class="timeline-content">
+
+                            <span class="timeline-date">
+                                Current
+                            </span>
+
+                            <h3>
+                                Bachelor of Computer Applications
+                            </h3>
+
+                            <p class="institution">
+                                Tribhuvan University
+                            </p>
+
+                            <p>
+                                Currently studying BCA with a focus on
+                                programming, databases, web technologies,
+                                and computer applications.
+                            </p>
+
+                            <span class="semester">
+                                Semester 04
+                            </span>
+
+                        </div>
+
                     </div>
 
                 </div>
 
             </div>
+
         </section>
 
 
         <!-- Projects -->
-        <section id="projects" class="section section-alt">
+        <section id="projects" class="section section-alt reveal">
+
             <div class="container">
 
-                <p class="section-label">Projects</p>
+                <p class="section-label">04 — Projects</p>
 
-                <h2>Selected Projects</h2>
+                <h2>
+                    Things I've
+                    <span>built.</span>
+                </h2>
 
                 <div class="projects-grid">
+
 
                     <!-- Project 1 -->
                     <article class="project-card">
 
-                        <div class="project-content">
-
-                            <p class="project-type">
+                        <div class="project-top">
+                            <span class="project-type">
                                 Web Application
-                            </p>
+                            </span>
 
-                            <h3>Student Management System</h3>
+                            <span class="project-index">
+                                01
+                            </span>
+                        </div>
 
-                            <p>
-                                A basic system for managing student
-                                records, including adding, updating,
-                                searching, and deleting information.
-                            </p>
+                        <div class="project-icon">
+                            &lt;/&gt;
+                        </div>
 
-                            <p class="project-tech">
-                                PHP · MySQL · HTML · CSS
-                            </p>
+                        <h3>
+                            Student Management System
+                        </h3>
 
-                            <div class="project-links">
-                                <a href="#" target="_blank">
-                                    GitHub
-                                </a>
+                        <p>
+                            A web application for managing student
+                            records with functionality for adding,
+                            updating, searching, and deleting data.
+                        </p>
 
-                                <a href="#" target="_blank">
-                                    Live Demo
-                                </a>
-                            </div>
+                        <div class="project-tech">
+                            PHP · MySQL · HTML · CSS
+                        </div>
+
+                        <div class="project-links">
+
+                            <a
+                                href="https://github.com/yourusername"
+                                target="_blank"
+                                rel="noopener">
+                                GitHub ↗
+                            </a>
+
+                            <a
+                                href="#"
+                                class="demo-button"
+                                data-project="Student Management System">
+                                Demo ↗
+                            </a>
 
                         </div>
 
@@ -203,33 +384,46 @@
                     <!-- Project 2 -->
                     <article class="project-card">
 
-                        <div class="project-content">
-
-                            <p class="project-type">
+                        <div class="project-top">
+                            <span class="project-type">
                                 Frontend
-                            </p>
+                            </span>
 
-                            <h3>Personal Portfolio</h3>
+                            <span class="project-index">
+                                02
+                            </span>
+                        </div>
 
-                            <p>
-                                A responsive personal portfolio website
-                                developed using HTML and CSS to present
-                                education, skills, and projects.
-                            </p>
+                        <div class="project-icon">
+                            ◇
+                        </div>
 
-                            <p class="project-tech">
-                                HTML · CSS · JavaScript
-                            </p>
+                        <h3>
+                            Personal Portfolio
+                        </h3>
 
-                            <div class="project-links">
-                                <a href="#" target="_blank">
-                                    GitHub
-                                </a>
+                        <p>
+                            A responsive portfolio website created to
+                            present my education, skills, projects,
+                            and development journey.
+                        </p>
 
-                                <a href="#" target="_blank">
-                                    Live Demo
-                                </a>
-                            </div>
+                        <div class="project-tech">
+                            HTML · CSS · JavaScript
+                        </div>
+
+                        <div class="project-links">
+
+                            <a
+                                href="https://github.com/yourusername"
+                                target="_blank"
+                                rel="noopener">
+                                GitHub ↗
+                            </a>
+
+                            <a href="#home">
+                                Live ↗
+                            </a>
 
                         </div>
 
@@ -239,29 +433,42 @@
                     <!-- Project 3 -->
                     <article class="project-card">
 
-                        <div class="project-content">
+                        <div class="project-top">
+                            <span class="project-type">
+                                Academic
+                            </span>
 
-                            <p class="project-type">
-                                Academic Project
-                            </p>
+                            <span class="project-index">
+                                03
+                            </span>
+                        </div>
 
-                            <h3>Project Name</h3>
+                        <div class="project-icon">
+                            { }
+                        </div>
 
-                            <p>
-                                Short description of your project,
-                                its purpose, and the technologies
-                                used to develop it.
-                            </p>
+                        <h3>
+                            Java Database Application
+                        </h3>
 
-                            <p class="project-tech">
-                                Java · MySQL
-                            </p>
+                        <p>
+                            An academic application exploring object
+                            oriented programming and database
+                            connectivity using Java and MySQL.
+                        </p>
 
-                            <div class="project-links">
-                                <a href="#" target="_blank">
-                                    GitHub
-                                </a>
-                            </div>
+                        <div class="project-tech">
+                            Java · MySQL
+                        </div>
+
+                        <div class="project-links">
+
+                            <a
+                                href="https://github.com/yourusername"
+                                target="_blank"
+                                rel="noopener">
+                                GitHub ↗
+                            </a>
 
                         </div>
 
@@ -270,56 +477,87 @@
                 </div>
 
             </div>
+
         </section>
 
 
         <!-- Contact -->
-        <section id="contact" class="section">
+        <section id="contact" class="section contact-section reveal">
+
             <div class="container contact">
 
-                <p class="section-label">Contact</p>
+                <p class="section-label">05 — Contact</p>
 
-                <h2>Get in Touch</h2>
+                <h2>
+                    Let's build
+                    <span>something.</span>
+                </h2>
 
-                <p>
-                    For internship opportunities, projects, or
-                    professional inquiries.
+                <p class="contact-description">
+                    Interested in working together, discussing a
+                    project, or simply connecting?
                 </p>
+
+                <a
+                    href="mailto:suyogze@gmail.com"
+                    class="email-link">
+                    suyogze@gmail.com
+                    <span>↗</span>
+                </a>
 
                 <div class="contact-links">
 
-                    <a href="mailto:suyogze@gmail.com.com">
-                        E-Mail
-                    </a>
-
-                    <a href="https://github.com/yourusername"
-                       target="_blank">
+                    <a
+                        href="https://github.com/yourusername"
+                        target="_blank"
+                        rel="noopener">
                         GitHub
                     </a>
 
-                    <a href="https://www.linkedin.com/in/suyogthapa-np/"
-                       target="_blank">
+                    <a
+                        href="https://www.linkedin.com/in/suyogthapa-np/"
+                        target="_blank"
+                        rel="noopener">
                         LinkedIn
                     </a>
 
                 </div>
 
             </div>
+
         </section>
 
     </main>
 
 
+    <!-- Back to top -->
+    <button
+        class="back-top"
+        id="backTop"
+        aria-label="Back to top">
+        ↑
+    </button>
+
+
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
+
+        <div class="container footer-content">
 
             <p>
-                © 2026 Your Name
+                © <span id="year"></span> Suyog Thapa
+            </p>
+
+            <p>
+                Built with HTML · CSS · JavaScript
             </p>
 
         </div>
+
     </footer>
+
+
+    <script src="script.js"></script>
 
 </body>
 </html>
